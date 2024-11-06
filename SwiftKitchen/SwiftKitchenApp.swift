@@ -10,23 +10,30 @@ import SwiftData
 
 @main
 struct SwiftKitchenApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-        .modelContainer(sharedModelContainer)
+  let container: ModelContainer
+  
+  var body: some Scene {
+    WindowGroup {
+      ContentView()
+        .modelContainer(container)
     }
+  }
+  
+  init() {
+    let schema = Schema([Recipe.self])
+    let config = ModelConfiguration("MyRecipes", schema: schema)
+    do {
+      container = try ModelContainer(for: schema, configurations: config)
+    } catch {
+      fatalError("Could not configure the container")
+    }
+    //        let config = ModelConfiguration(url: URL.documentsDirectory.appending(path: "MyBooks.store"))
+    //        do {
+    //            container = try ModelContainer(for: Book.self, configurations: config)
+    //        } catch {
+    //            fatalError("Could not configure the container")
+    //        }
+    print(URL.applicationSupportDirectory.path(percentEncoded: false))
+    //        print(URL.documentsDirectory.path())
+  }
 }
